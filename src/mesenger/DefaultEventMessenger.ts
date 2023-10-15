@@ -1,14 +1,20 @@
-import { EventNames, IEventMessenger } from "./IEventMessenger";
 import { v4 as uuid } from "uuid";
+import { EventCallback, EventTemp, IEventMessenger } from "./IEventMessenger";
 
-export class DefaultEventMessenger<T extends string[]>
-  implements IEventMessenger<T>
+type CallbackRecord<T extends Record<string, EventTemp<unknown>>> = {
+  [K in keyof T]: Record<string, EventCallback<T[K]["payload"]>>;
+};
+
+export class DefaultEventMessenger<
+  T extends { [K in keyof T]: EventTemp<unknown> }
+> implements IEventMessenger<T>
 {
-  callbackMap: Partial<
-    Record<keyof EventNames<T>, Record<string, CallableFunction>>
-  > = {};
+  callbackMap: Partial<CallbackRecord<T>> = {};
 
-  addCallback(event: keyof EventNames<T>, callback: CallableFunction): string {
+  addCallback = <K extends keyof T>(
+    event: K,
+    callback: (payload: T[K]["payload"]) => void
+  ): string => {
     const id = uuid();
 
     if (!this.callbackMap[event]) {
@@ -23,19 +29,19 @@ export class DefaultEventMessenger<T extends string[]>
     }
 
     return id;
-  }
+  };
 
-  removeCallback(event: keyof EventNames<T>, id: string): void {
+  removeCallback = <K extends keyof T>(event: K, id: string) => {
     if (this.callbackMap[event]) {
       this.callbackMap[event] && delete this.callbackMap[event]![id];
     }
-  }
+  };
 
-  emit(event: keyof EventNames<T>): void {
+  emit = <K extends keyof T>(event: K, payload: T[K]["payload"]) => {
     if (this.callbackMap[event]) {
       Object.values(this.callbackMap[event] || []).forEach((callback) =>
-        callback()
+        callback(payload)
       );
     }
-  }
+  };
 }

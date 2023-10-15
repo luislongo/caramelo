@@ -1,26 +1,47 @@
 import { createContext, useEffect } from "react";
 import { v4 as uuid } from "uuid";
 import { DefaultEventMessenger } from "./mesenger/DefaultEventMessenger";
-import { IEventMessenger } from "./mesenger/IEventMessenger";
+import {
+  EventCallback,
+  EventNames,
+  EventPayloads,
+  IEventMessenger,
+} from "./mesenger/IEventMessenger";
 
-type EventProviderContextProps = {
-  useEvent: (name: string, callback: () => void) => void;
-  emitEvent: (name: string) => void;
+type EventProviderContextProps<
+  T extends string[],
+  P extends EventPayloads<T> = Record<T[number], never>
+> = {
+  useEvent: <K extends keyof EventNames<T>>(
+    name: K,
+    callback: EventCallback<P[K]>
+  ) => void;
+  emitEvent: <K extends keyof EventNames<T>>(name: K, payload: P[K]) => void;
 };
-export const EventProviderContext = createContext<EventProviderContextProps>(
-  {} as EventProviderContextProps
-);
 
-export type EventProviderProps = {
+export const EventProviderContext = createContext<
+  EventProviderContextProps<["a", "b"], {}>
+>({} as EventProviderContextProps<T, P>);
+
+export type EventProviderProps<
+  T extends string[] = string[],
+  P extends EventPayloads<T> = EventPayloads<T>
+> = {
   children: React.ReactNode;
-  messenger?: IEventMessenger;
+  messenger?: IEventMessenger<T, P>;
 };
 
-export const EventProvider = ({
+export const EventProvider = <
+  T extends string[] = string[],
+  P extends EventPayloads<T> = EventPayloads<T>
+>({
   children,
-  messenger = new DefaultEventMessenger(),
-}: EventProviderProps) => {
-  const useEvent = (name: string, callback: () => void) => {
+  messenger = new DefaultEventMessenger<T, P>(),
+}: EventProviderProps<T, P>) => {
+  const useEvent = (
+    name: keyof EventNames<T>,
+    callback: EventCallback<P[typeof name]>
+  ) => {
     useEffect(() => {
       const id = uuid();
 
@@ -32,8 +53,8 @@ export const EventProvider = ({
     }, [callback, name]);
   };
 
-  const emitEvent = (name: string) => {
-    messenger.emit(name);
+  const emitEvent = (name: keyof EventNames<T>, payload: P[typeof name]) => {
+    messenger.emit(name, payload);
   };
 
   return (

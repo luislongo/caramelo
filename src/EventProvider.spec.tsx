@@ -8,7 +8,7 @@ const Emitter = ({ name = "default" }: { name?: string }) => {
   const { emitEvent } = useContext(EventProviderContext);
 
   return (
-    <button onClick={() => emitEvent(name)} data-testid={`emitter-${name}`}>
+    <button onClick={() => emitEvent(name, {})} data-testid={`emitter-${name}`}>
       Emit {name}
     </button>
   );
