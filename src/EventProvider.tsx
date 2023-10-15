@@ -1,5 +1,7 @@
-import { createContext, useEffect, useRef } from "react";
+import { createContext, useEffect } from "react";
 import { v4 as uuid } from "uuid";
+import { DefaultEventMessenger } from "./mesenger/DefaultEventMessenger";
+import { IEventMessenger } from "./mesenger/IEventMessenger";
 
 type EventProviderContextProps = {
   useEvent: (name: string, callback: () => void) => void;
@@ -11,31 +13,27 @@ export const EventProviderContext = createContext<EventProviderContextProps>(
 
 export type EventProviderProps = {
   children: React.ReactNode;
+  messenger?: IEventMessenger;
 };
 
-export const EventProvider = ({ children }: EventProviderProps) => {
-  const callbackArrayRef = useRef<
-    Record<string, Record<string, CallableFunction>>
-  >({});
-
+export const EventProvider = ({
+  children,
+  messenger = new DefaultEventMessenger(),
+}: EventProviderProps) => {
   const useEvent = (name: string, callback: () => void) => {
     useEffect(() => {
       const id = uuid();
 
-      if (!callbackArrayRef.current[name]) {
-        callbackArrayRef.current[name] = {};
-      }
-      callbackArrayRef.current[name][id] = callback;
+      messenger.addCallback(name, callback);
+
       return () => {
-        delete callbackArrayRef.current[name][id];
+        messenger.removeCallback(name, id);
       };
     }, [callback, name]);
   };
 
   const emitEvent = (name: string) => {
-    Object.values(callbackArrayRef.current[name] || []).forEach((callback) => {
-      callback();
-    });
+    messenger.emit(name);
   };
 
   return (

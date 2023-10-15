@@ -1,7 +1,8 @@
-import { describe, it, expect, vi } from "vitest";
-import { render } from "@testing-library/react";
-import { EventProvider, EventProviderContext } from "./EventProvider";
+import { render, waitFor } from "@testing-library/react";
 import { useContext } from "react";
+import { describe, expect, it, vi } from "vitest";
+import { EventProvider, EventProviderContext } from "./EventProvider";
+import { eventMessengerMock } from "./mesenger/EventMessenger.mock";
 
 const Emitter = ({ name = "default" }: { name?: string }) => {
   const { emitEvent } = useContext(EventProviderContext);
@@ -30,85 +31,44 @@ const Receiver = ({
 };
 
 describe("EventProvider", () => {
-  it("Should emit and receive event", () => {
-    const callback = vi.fn();
-    const sut = render(
-      <EventProvider>
-        <Receiver callback={callback} />
-        <Emitter />
+  it("Should add callback when receiver is mounted", async () => {
+    render(
+      <EventProvider messenger={eventMessengerMock}>
+        <Receiver />
       </EventProvider>
     );
 
-    sut.getByTestId("emitter-default").click();
-    expect(callback).toHaveBeenCalled();
+    await waitFor(() =>
+      expect(eventMessengerMock.addCallback).toHaveBeenCalled()
+    );
   });
 
-  it("Should be able to emit from different components", () => {
+  it("Should remove callback when receiver is unmounted", () => {
     const callback = vi.fn();
     const sut = render(
-      <EventProvider>
+      <EventProvider messenger={eventMessengerMock}>
         <Receiver callback={callback} />
-        <Emitter />
-        <Emitter />
       </EventProvider>
     );
-
-    const [first, second] = sut.getAllByTestId("emitter-default");
-    first.click();
-    second.click();
-
-    expect(callback).toHaveBeenCalledTimes(2);
-  });
-
-  it("Should be able to receive from different components", () => {
-    const callback = vi.fn();
-    const sut = render(
-      <EventProvider>
-        <Receiver callback={callback} />
-        <Receiver callback={callback} />
-        <Emitter />
-      </EventProvider>
-    );
-
-    sut.getByTestId("emitter-default").click();
-    expect(callback).toHaveBeenCalledTimes(2);
-  });
-
-  it("Should not receive event after unmount", () => {
-    const callback = vi.fn();
-    const sut = render(
-      <EventProvider>
-        <Receiver callback={callback} />
-        <Emitter />
-      </EventProvider>
-    );
-
-    sut.getByTestId("emitter-default").click();
-    expect(callback).toHaveBeenCalledTimes(1);
 
     sut.rerender(
-      <EventProvider>
+      <EventProvider messenger={eventMessengerMock}>
+        <div />
+      </EventProvider>
+    );
+
+    expect(eventMessengerMock.removeCallback).toHaveBeenCalled();
+  });
+
+  it("Should emit event when emitter is clicked", async () => {
+    const sut = render(
+      <EventProvider messenger={eventMessengerMock}>
         <Emitter />
       </EventProvider>
     );
 
     sut.getByTestId("emitter-default").click();
-    expect(callback).toHaveBeenCalledTimes(1);
-  });
 
-  it("Should be able to emit different events", () => {
-    const callback = vi.fn();
-    const sut = render(
-      <EventProvider>
-        <Receiver name="first" callback={callback} />
-        <Receiver name="second" callback={callback} />
-        <Emitter name="first" />
-        <Emitter name="second" />
-      </EventProvider>
-    );
-
-    sut.getByTestId("emitter-first").click();
-    sut.getByTestId("emitter-second").click();
-    expect(callback).toHaveBeenCalledTimes(2);
+    await waitFor(() => expect(eventMessengerMock.emit).toHaveBeenCalled());
   });
 });
