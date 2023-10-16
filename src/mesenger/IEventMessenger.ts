@@ -20,13 +20,11 @@ export type EmitType<T extends string[], P extends EventPayloads<T>> = (
   payload: P[typeof event]
 ) => void;
 
-export type EventTemp<P> = {
+export type EventType<P> = {
   payload: P;
 };
 
-export interface IEventMessenger<
-  T extends { [K in keyof T]: EventTemp<unknown> }
-> {
+export interface IEventMessenger<T extends Record<string, EventType<unknown>>> {
   addCallback: <K extends keyof T>(
     event: K,
     callback: (payload: T[K]["payload"]) => void

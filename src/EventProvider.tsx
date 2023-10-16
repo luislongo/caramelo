@@ -3,44 +3,39 @@ import { v4 as uuid } from "uuid";
 import { DefaultEventMessenger } from "./mesenger/DefaultEventMessenger";
 import {
   EventCallback,
-  EventNames,
-  EventPayloads,
+  EventType,
   IEventMessenger,
 } from "./mesenger/IEventMessenger";
 
 type EventProviderContextProps<
-  T extends string[],
-  P extends EventPayloads<T> = Record<T[number], never>
+  T extends Record<string, EventType<unknown>> = Record<
+    string,
+    EventType<unknown>
+  >
 > = {
-  useEvent: <K extends keyof EventNames<T>>(
+  useEvent: <K extends keyof T>(
     name: K,
-    callback: EventCallback<P[K]>
+    callback: EventCallback<T[K]["payload"]>
   ) => void;
-  emitEvent: <K extends keyof EventNames<T>>(name: K, payload: P[K]) => void;
+  emitEvent: <K extends keyof T>(name: K, payload: T[K]["payload"]) => void;
 };
 
-export const EventProviderContext = createContext<
-  EventProviderContextProps<["a", "b"], {}>
->({} as EventProviderContextProps<T, P>);
+export const EventProviderContext = createContext<EventProviderContextProps>(
+  {} as EventProviderContextProps
+);
 
-export type EventProviderProps<
-  T extends string[] = string[],
-  P extends EventPayloads<T> = EventPayloads<T>
-> = {
+export type EventProviderProps<T extends Record<string, EventType<unknown>>> = {
   children: React.ReactNode;
-  messenger?: IEventMessenger<T, P>;
+  messenger?: IEventMessenger<T>;
 };
 
-export const EventProvider = <
-  T extends string[] = string[],
-  P extends EventPayloads<T> = EventPayloads<T>
->({
+export const EventProvider = <T extends Record<string, EventType<unknown>>>({
   children,
-  messenger = new DefaultEventMessenger<T, P>(),
-}: EventProviderProps<T, P>) => {
-  const useEvent = (
-    name: keyof EventNames<T>,
-    callback: EventCallback<P[typeof name]>
+  messenger = new DefaultEventMessenger<T>(),
+}: EventProviderProps<T>) => {
+  const useEvent = <K extends keyof T>(
+    name: K,
+    callback: EventCallback<T[K]["payload"]>
   ) => {
     useEffect(() => {
       const id = uuid();
@@ -53,7 +48,7 @@ export const EventProvider = <
     }, [callback, name]);
   };
 
-  const emitEvent = (name: keyof EventNames<T>, payload: P[typeof name]) => {
+  const emitEvent = <K extends keyof T>(name: K, payload: T[K]["payload"]) => {
     messenger.emit(name, payload);
   };
 
