@@ -5,7 +5,6 @@ describe("DefaultEventMessenger", () => {
   it("Should add callback and return id", () => {
     const eventMessenger = new DefaultEventMessenger<{
       test: {
-        name: "test";
         payload: {
           message: string;
         };
@@ -21,7 +20,6 @@ describe("DefaultEventMessenger", () => {
   it("Should remove callback", () => {
     const eventMessenger = new DefaultEventMessenger<{
       test: {
-        name: "test";
         payload: {
           message: string;
         };
@@ -39,7 +37,6 @@ describe("DefaultEventMessenger", () => {
   it("Should emit callback for all listeners", () => {
     const eventMessenger = new DefaultEventMessenger<{
       test: {
-        name: "test";
         payload: Record<string, never>;
       };
     }>();
@@ -57,7 +54,6 @@ describe("DefaultEventMessenger", () => {
   it("Should be able to handle specific event names", () => {
     const eventMessenger = new DefaultEventMessenger<{
       test: {
-        name: "test";
         payload: Record<string, never>;
       };
       test2: {
@@ -79,13 +75,11 @@ describe("DefaultEventMessenger", () => {
   it("Should be able to handle specific event payloads", () => {
     const eventMessenger = new DefaultEventMessenger<{
       testA: {
-        name: "testA";
         payload: {
           count: number;
         };
       };
       testB: {
-        name: "testB";
         payload: {
           message: string;
         };

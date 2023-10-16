@@ -21,7 +21,6 @@ export type EmitType<T extends string[], P extends EventPayloads<T>> = (
 ) => void;
 
 export type EventTemp<P> = {
-  name: string;
   payload: P;
 };
 
