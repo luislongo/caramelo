@@ -1,5 +1,5 @@
 import { v4 as uuid } from "uuid";
-import { EventCallback, EventType, IEventMessenger } from "./IEventMessenger";
+import { EventCallback, EventType, IMessenger } from "./Messenger.types";
 
 type CallbackRecord<T extends Record<string, EventType<unknown>>> = {
   [K in keyof T]: Record<string, EventCallback<T[K]["payload"]>>;
@@ -7,7 +7,7 @@ type CallbackRecord<T extends Record<string, EventType<unknown>>> = {
 
 export class DefaultEventMessenger<
   T extends { [K in keyof T]: EventType<unknown> }
-> implements IEventMessenger<T>
+> implements IMessenger<T>
 {
   callbackMap: Partial<CallbackRecord<T>> = {};
 
