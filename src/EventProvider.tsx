@@ -7,7 +7,7 @@ import {
   IEventMessenger,
 } from "./mesenger/IEventMessenger";
 
-type EventProviderContextProps<
+export type EventProviderContextProps<
   T extends Record<string, EventType<unknown>> = Record<
     string,
     EventType<unknown>
