@@ -1,4 +1,4 @@
-import { DefaultEventMessenger } from "./DefaultEventMessenger";
+import { DefaultEventMessenger } from "./DefaultMessenger";
 import { expect, describe, it, vi } from "vitest";
 
 describe("DefaultEventMessenger", () => {

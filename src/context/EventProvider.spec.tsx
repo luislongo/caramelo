@@ -1,11 +1,22 @@
 import { render, waitFor } from "@testing-library/react";
-import { useContext } from "react";
+import { Context, createContext, useContext } from "react";
 import { describe, expect, it, vi } from "vitest";
-import { EventProvider, EventProviderContext } from "./EventProvider";
-import { eventMessengerMock } from "../messenger/EventMessenger.mock";
+import { EventProvider } from "./EventProvider";
+import { eventMessengerMock } from "../messenger/Messenger.mock";
+import { EventProviderContextProps } from "./EventProvider.types";
 
-const Emitter = ({ name = "default" }: { name?: string }) => {
-  const { emitEvent } = useContext(EventProviderContext);
+const EventProviderContext = createContext<EventProviderContextProps>(
+  {} as EventProviderContextProps
+);
+
+const Emitter = ({
+  name = "default",
+  context,
+}: {
+  name?: string;
+  context: Context<EventProviderContextProps>;
+}) => {
+  const { emitEvent } = useContext(context);
 
   return (
     <button onClick={() => emitEvent(name, {})} data-testid={`emitter-${name}`}>
@@ -17,11 +28,13 @@ const Emitter = ({ name = "default" }: { name?: string }) => {
 const Receiver = ({
   name = "default",
   callback = () => null,
+  context,
 }: {
   name?: string;
   callback?: () => void;
+  context: Context<EventProviderContextProps>;
 }) => {
-  const { useEvent } = useContext(EventProviderContext);
+  const { useEvent } = useContext(context);
 
   useEvent(name, () => {
     callback();
@@ -33,8 +46,11 @@ const Receiver = ({
 describe("EventProvider", () => {
   it("Should add callback when receiver is mounted", async () => {
     render(
-      <EventProvider messenger={eventMessengerMock}>
-        <Receiver />
+      <EventProvider
+        messenger={eventMessengerMock}
+        context={EventProviderContext}
+      >
+        <Receiver context={EventProviderContext} />
       </EventProvider>
     );
 
@@ -46,13 +62,19 @@ describe("EventProvider", () => {
   it("Should remove callback when receiver is unmounted", () => {
     const callback = vi.fn();
     const sut = render(
-      <EventProvider messenger={eventMessengerMock}>
-        <Receiver callback={callback} />
+      <EventProvider
+        messenger={eventMessengerMock}
+        context={EventProviderContext}
+      >
+        <Receiver callback={callback} context={EventProviderContext} />
       </EventProvider>
     );
 
     sut.rerender(
-      <EventProvider messenger={eventMessengerMock}>
+      <EventProvider
+        messenger={eventMessengerMock}
+        context={EventProviderContext}
+      >
         <div />
       </EventProvider>
     );
@@ -62,8 +84,11 @@ describe("EventProvider", () => {
 
   it("Should emit event when emitter is clicked", async () => {
     const sut = render(
-      <EventProvider messenger={eventMessengerMock}>
-        <Emitter />
+      <EventProvider
+        messenger={eventMessengerMock}
+        context={EventProviderContext}
+      >
+        <Emitter context={EventProviderContext} />
       </EventProvider>
     );
 

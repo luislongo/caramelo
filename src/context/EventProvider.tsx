@@ -1,37 +1,13 @@
-import { createContext, useEffect } from "react";
+import { useEffect } from "react";
 import { v4 as uuid } from "uuid";
-import { DefaultEventMessenger } from "../messenger/DefaultEventMessenger";
-import {
-  EventCallback,
-  EventType,
-  IEventMessenger,
-} from "../messenger/IEventMessenger";
-
-export type EventProviderContextProps<
-  T extends Record<string, EventType<unknown>> = Record<
-    string,
-    EventType<unknown>
-  >
-> = {
-  useEvent: <K extends keyof T>(
-    name: K,
-    callback: EventCallback<T[K]["payload"]>
-  ) => void;
-  emitEvent: <K extends keyof T>(name: K, payload: T[K]["payload"]) => void;
-};
-
-export const EventProviderContext = createContext<EventProviderContextProps>(
-  {} as EventProviderContextProps
-);
-
-export type EventProviderProps<T extends Record<string, EventType<unknown>>> = {
-  children: React.ReactNode;
-  messenger?: IEventMessenger<T>;
-};
+import { DefaultEventMessenger } from "../messenger/DefaultMessenger";
+import { EventCallback, EventType } from "../messenger/Messenger.types";
+import { EventProviderProps } from "./EventProvider.types";
 
 export const EventProvider = <T extends Record<string, EventType<unknown>>>({
   children,
   messenger = new DefaultEventMessenger<T>(),
+  context: Context,
 }: EventProviderProps<T>) => {
   const useEvent = <K extends keyof T>(
     name: K,
@@ -53,13 +29,13 @@ export const EventProvider = <T extends Record<string, EventType<unknown>>>({
   };
 
   return (
-    <EventProviderContext.Provider
+    <Context.Provider
       value={{
         useEvent,
         emitEvent,
       }}
     >
       {children}
-    </EventProviderContext.Provider>
+    </Context.Provider>
   );
 };

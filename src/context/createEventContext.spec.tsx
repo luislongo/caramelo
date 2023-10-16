@@ -1,9 +1,9 @@
 import { describe, it, expect, vi } from "vitest";
 import { createEventContext } from "./createEventContext";
-import { EventProviderContextProps } from "./EventProvider";
 import { render, waitFor } from "@testing-library/react";
 import { Context, useContext } from "react";
-import { EventType } from "../messenger/IEventMessenger";
+import { EventType } from "../messenger/Messenger.types";
+import { EventProviderContextProps } from "./EventProvider.types";
 
 const Emitter = <T extends Record<string, EventType<unknown>>>({
   name = "default",
