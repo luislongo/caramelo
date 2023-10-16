@@ -3,7 +3,7 @@ import { createEventContext } from "./createEventContext";
 import { EventProviderContextProps } from "./EventProvider";
 import { render, waitFor } from "@testing-library/react";
 import { Context, useContext } from "react";
-import { EventType } from "./mesenger/IEventMessenger";
+import { EventType } from "../messenger/IEventMessenger";
 
 const Emitter = <T extends Record<string, EventType<unknown>>>({
   name = "default",

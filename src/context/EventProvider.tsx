@@ -1,11 +1,11 @@
 import { createContext, useEffect } from "react";
 import { v4 as uuid } from "uuid";
-import { DefaultEventMessenger } from "./mesenger/DefaultEventMessenger";
+import { DefaultEventMessenger } from "../messenger/DefaultEventMessenger";
 import {
   EventCallback,
   EventType,
   IEventMessenger,
-} from "./mesenger/IEventMessenger";
+} from "../messenger/IEventMessenger";
 
 export type EventProviderContextProps<
   T extends Record<string, EventType<unknown>> = Record<

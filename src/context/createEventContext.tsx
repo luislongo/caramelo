@@ -1,6 +1,6 @@
 import { createContext } from "react";
 import { EventProvider, EventProviderContextProps } from "./EventProvider";
-import { EventType } from "./mesenger/IEventMessenger";
+import { EventType } from "../messenger/IEventMessenger";
 
 export const createEventContext = <
   T extends Record<string, EventType<unknown>>

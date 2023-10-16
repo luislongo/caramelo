@@ -15,10 +15,10 @@ export type RemoveCallbackType<T extends string[]> = (
   id: string
 ) => void;
 
-export type EmitType<T extends string[], P extends EventPayloads<T>> = (
-  event: keyof EventNames<T>,
-  payload: P[typeof event]
-) => void;
+export type EmitType<
+  T extends Record<string, EventType<unknown>>,
+  K extends keyof T
+> = (event: K, payload: T[K]["payload"]) => void;
 
 export type EventType<P> = {
   payload: P;

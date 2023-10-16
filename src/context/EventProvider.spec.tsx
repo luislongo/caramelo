@@ -2,7 +2,7 @@ import { render, waitFor } from "@testing-library/react";
 import { useContext } from "react";
 import { describe, expect, it, vi } from "vitest";
 import { EventProvider, EventProviderContext } from "./EventProvider";
-import { eventMessengerMock } from "./mesenger/EventMessenger.mock";
+import { eventMessengerMock } from "../messenger/EventMessenger.mock";
 
 const Emitter = ({ name = "default" }: { name?: string }) => {
   const { emitEvent } = useContext(EventProviderContext);
