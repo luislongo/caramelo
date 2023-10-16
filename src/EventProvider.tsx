@@ -1,41 +1,55 @@
-import { createContext, useEffect, useRef } from "react";
+import { createContext, useEffect } from "react";
 import { v4 as uuid } from "uuid";
+import { DefaultEventMessenger } from "./mesenger/DefaultEventMessenger";
+import {
+  EventCallback,
+  EventType,
+  IEventMessenger,
+} from "./mesenger/IEventMessenger";
 
-type EventProviderContextProps = {
-  useEvent: (name: string, callback: () => void) => void;
-  emitEvent: (name: string) => void;
+type EventProviderContextProps<
+  T extends Record<string, EventType<unknown>> = Record<
+    string,
+    EventType<unknown>
+  >
+> = {
+  useEvent: <K extends keyof T>(
+    name: K,
+    callback: EventCallback<T[K]["payload"]>
+  ) => void;
+  emitEvent: <K extends keyof T>(name: K, payload: T[K]["payload"]) => void;
 };
+
 export const EventProviderContext = createContext<EventProviderContextProps>(
   {} as EventProviderContextProps
 );
 
-export type EventProviderProps = {
+export type EventProviderProps<T extends Record<string, EventType<unknown>>> = {
   children: React.ReactNode;
+  messenger?: IEventMessenger<T>;
 };
 
-export const EventProvider = ({ children }: EventProviderProps) => {
-  const callbackArrayRef = useRef<
-    Record<string, Record<string, CallableFunction>>
-  >({});
-
-  const useEvent = (name: string, callback: () => void) => {
+export const EventProvider = <T extends Record<string, EventType<unknown>>>({
+  children,
+  messenger = new DefaultEventMessenger<T>(),
+}: EventProviderProps<T>) => {
+  const useEvent = <K extends keyof T>(
+    name: K,
+    callback: EventCallback<T[K]["payload"]>
+  ) => {
     useEffect(() => {
       const id = uuid();
 
-      if (!callbackArrayRef.current[name]) {
-        callbackArrayRef.current[name] = {};
-      }
-      callbackArrayRef.current[name][id] = callback;
+      messenger.addCallback(name, callback);
+
       return () => {
-        delete callbackArrayRef.current[name][id];
+        messenger.removeCallback(name, id);
       };
     }, [callback, name]);
   };
 
-  const emitEvent = (name: string) => {
-    Object.values(callbackArrayRef.current[name] || []).forEach((callback) => {
-      callback();
-    });
+  const emitEvent = <K extends keyof T>(name: K, payload: T[K]["payload"]) => {
+    messenger.emit(name, payload);
   };
 
   return (
