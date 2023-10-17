@@ -3,12 +3,13 @@ import {
   AddCallbackParams,
   EmitParams,
   EventCallback,
+  EventCallbackParams,
   EventType,
   IMessenger,
 } from "./Messenger.types";
 
 type CallbackRecord<T extends Record<string, EventType<unknown, unknown>>> = {
-  [K in keyof T]: Record<string, EventCallback<T[K]["payload"]>>;
+  [K in keyof T]: Record<string, EventCallback<T, K>>;
 };
 
 export class DefaultEventMessenger<
@@ -45,7 +46,7 @@ export class DefaultEventMessenger<
   emit = <K extends keyof T>(...[event, payload]: EmitParams<T, K>) => {
     if (this.callbackMap[event]) {
       Object.values(this.callbackMap[event] || []).forEach((callback) =>
-        callback(payload)
+        callback(...([payload] as EventCallbackParams<T, K>))
       );
     }
   };
