@@ -8,6 +8,7 @@ describe("DefaultEventMessenger", () => {
         payload: {
           message: string;
         };
+        options: Record<string, never>;
       };
     }>();
 
@@ -23,6 +24,7 @@ describe("DefaultEventMessenger", () => {
         payload: {
           message: string;
         };
+        options: Record<string, never>;
       };
     }>();
 
@@ -38,6 +40,7 @@ describe("DefaultEventMessenger", () => {
     const eventMessenger = new DefaultEventMessenger<{
       test: {
         payload: Record<string, never>;
+        options: Record<string, never>;
       };
     }>();
     const callback1 = vi.fn();
@@ -55,10 +58,11 @@ describe("DefaultEventMessenger", () => {
     const eventMessenger = new DefaultEventMessenger<{
       test: {
         payload: Record<string, never>;
+        options: Record<string, never>;
       };
       test2: {
-        name: "test2";
         payload: Record<string, never>;
+        options: Record<string, never>;
       };
     }>();
     const callback1 = vi.fn();
@@ -78,11 +82,13 @@ describe("DefaultEventMessenger", () => {
         payload: {
           count: number;
         };
+        options: Record<string, never>;
       };
       testB: {
         payload: {
           message: string;
         };
+        options: Record<string, never>;
       };
     }>();
 

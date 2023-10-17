@@ -5,7 +5,7 @@ import React, { Context, useContext } from "react";
 import { EventType } from "../messenger/Messenger.types";
 import { EventProviderContextProps } from "./EventProvider.types";
 
-const Emitter = <T extends Record<string, EventType<unknown>>>({
+const Emitter = <T extends Record<string, EventType<unknown, unknown>>>({
   name = "default",
   context,
 }: {
@@ -21,7 +21,7 @@ const Emitter = <T extends Record<string, EventType<unknown>>>({
   );
 };
 
-const Receiver = <T extends Record<string, EventType<unknown>>>({
+const Receiver = <T extends Record<string, EventType<unknown, unknown>>>({
   name = "default",
   callback = () => null,
   context,
@@ -32,9 +32,13 @@ const Receiver = <T extends Record<string, EventType<unknown>>>({
 }) => {
   const { useEvent } = useContext(context);
 
-  useEvent(name, () => {
-    callback();
-  });
+  useEvent(
+    name,
+    () => {
+      callback();
+    },
+    {}
+  );
 
   return null;
 };
@@ -44,6 +48,7 @@ describe("createEventContext", () => {
     type EventType = {
       a: {
         payload: string;
+        options: Record<string, never>;
       };
     };
     const { EventContext, Provider } = createEventContext<EventType>(
@@ -58,11 +63,13 @@ describe("createEventContext", () => {
     type EventTypeA = {
       a: {
         payload: string;
+        options: Record<string, never>;
       };
     };
     type EventTypeB = {
       b: {
         payload: number;
+        options: Record<string, never>;
       };
     };
 
@@ -98,11 +105,13 @@ describe("createEventContext", () => {
     type EventTypeA = {
       a: {
         payload: string;
+        options: Record<string, never>;
       };
     };
     type EventTypeB = {
       b: {
         payload: number;
+        options: Record<string, never>;
       };
     };
 

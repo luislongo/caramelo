@@ -37,9 +37,13 @@ const Receiver = ({
 }) => {
   const { useEvent } = useContext(context);
 
-  useEvent(name, () => {
-    callback();
-  });
+  useEvent(
+    name,
+    () => {
+      callback();
+    },
+    {}
+  );
 
   return null;
 };
