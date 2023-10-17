@@ -18,7 +18,6 @@
 ```
 npm i @luislongo/caramelo
 yarn add @luislongo/caramelo
-
 ```
 
 ## 🚀 Quickstart
@@ -123,7 +122,7 @@ const Receiver = () => {
 };
 ```
 
-## 🚀 Customizing event emission
+## ⚙️ Customizing event emission
 
 By default, event emission uses a simple id register which does not take into account the `options` object. In order to use it, you will have to create a new messenger class implementing
 the `IMessenger` interface. The interface provides three methods:
