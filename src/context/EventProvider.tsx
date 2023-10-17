@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import { v4 as uuid } from "uuid";
 import { DefaultEventMessenger } from "../messenger/DefaultMessenger";
 import { EventCallback, EventType } from "../messenger/Messenger.types";
