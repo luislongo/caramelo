@@ -9,5 +9,15 @@ export default defineConfig(() => ({
     setupFiles: ["./setupTests.ts"],
     testMatch: ["**/*.spec.ts?(x)"],
     globals: true,
+    coverage: {
+      provider: "v8",
+      reportsDirectory: "./coverage",
+      reporter: ["text", "html", "json", "json-summary"],
+      exclude: [],
+      lines: 80,
+      branches: 80,
+      functions: 80,
+      statements: 80,
+    },
   },
 }));

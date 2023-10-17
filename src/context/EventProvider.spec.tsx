@@ -4,6 +4,7 @@ import { describe, expect, it, vi } from "vitest";
 import { EventProvider } from "./EventProvider";
 import { eventMessengerMock } from "../messenger/Messenger.mock";
 import { EventProviderContextProps } from "./EventProvider.types";
+import React from "react";
 
 const EventProviderContext = createContext<EventProviderContextProps>(
   {} as EventProviderContextProps

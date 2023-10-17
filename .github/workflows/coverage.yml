@@ -1,0 +1,35 @@
+name: Coverage Report
+
+on:
+  pull_request:
+    branches: main
+
+jobs:
+  build-and-test:
+    permissions: write-all
+    name: Build and Test
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Setup NodeJS
+        uses: actions/setup-node@v1
+        with:
+          node-version: "16.14.2"
+
+      - name: Build project
+        run: |
+          npm install -ci
+          npm run build
+
+      - name: Run coverage
+        run: |
+          npx vitest --coverage
+      - name: "Report Coverage"
+        if: always()
+        uses: davelosert/vitest-coverage-report-action@v2
+        with:
+          json-summary-path: "./coverage/coverage-summary.json"
+          json-final-path: "./coverage/coverage-final.json"
