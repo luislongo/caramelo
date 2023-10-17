@@ -2,7 +2,7 @@ import { vi } from "vitest";
 import { IMessenger } from "./Messenger.types";
 
 export class MessengerMock
-  implements IMessenger<Record<string, { payload: unknown }>>
+  implements IMessenger<Record<string, { payload: unknown; options: unknown }>>
 {
   addCallback = vi.fn();
   removeCallback = vi.fn();

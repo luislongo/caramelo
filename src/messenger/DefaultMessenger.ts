@@ -1,19 +1,25 @@
 import { v4 as uuid } from "uuid";
-import { EventCallback, EventType, IMessenger } from "./Messenger.types";
+import {
+  AddCallbackParams,
+  EmitParams,
+  EventCallback,
+  EventCallbackParams,
+  EventType,
+  IMessenger,
+} from "./Messenger.types";
 
-type CallbackRecord<T extends Record<string, EventType<unknown>>> = {
-  [K in keyof T]: Record<string, EventCallback<T[K]["payload"]>>;
+type CallbackRecord<T extends Record<string, EventType<unknown, unknown>>> = {
+  [K in keyof T]: Record<string, EventCallback<T, K>>;
 };
 
 export class DefaultEventMessenger<
-  T extends { [K in keyof T]: EventType<unknown> }
+  T extends { [K in keyof T]: EventType<unknown, unknown> }
 > implements IMessenger<T>
 {
   callbackMap: Partial<CallbackRecord<T>> = {};
 
   addCallback = <K extends keyof T>(
-    event: K,
-    callback: (payload: T[K]["payload"]) => void
+    ...[event, callback]: AddCallbackParams<T, K>
   ): string => {
     const id = uuid();
 
@@ -37,10 +43,10 @@ export class DefaultEventMessenger<
     }
   };
 
-  emit = <K extends keyof T>(event: K, payload: T[K]["payload"]) => {
+  emit = <K extends keyof T>(...[event, payload]: EmitParams<T, K>) => {
     if (this.callbackMap[event]) {
       Object.values(this.callbackMap[event] || []).forEach((callback) =>
-        callback(payload)
+        callback(...([payload] as EventCallbackParams<T, K>))
       );
     }
   };

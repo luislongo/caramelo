@@ -4,7 +4,7 @@ import { EventType } from "../messenger/Messenger.types";
 import { EventProviderContextProps } from "./EventProvider.types";
 
 export const createEventContext = <
-  T extends Record<string, EventType<unknown>>
+  T extends Record<string, EventType<unknown, unknown>>
 >(
   initialState: EventProviderContextProps<T>
 ) => {

@@ -2,39 +2,58 @@ import { describe, it, expect, vi } from "vitest";
 import { createEventContext } from "./createEventContext";
 import { render, waitFor } from "@testing-library/react";
 import React, { Context, useContext } from "react";
-import { EventType } from "../messenger/Messenger.types";
+import {
+  EventType,
+  EmitParams,
+  AddCallbackParams,
+} from "../messenger/Messenger.types";
 import { EventProviderContextProps } from "./EventProvider.types";
 
-const Emitter = <T extends Record<string, EventType<unknown>>>({
-  name = "default",
+const Emitter = <
+  T extends Record<string, EventType<unknown, unknown>>,
+  K extends keyof T
+>({
+  name,
   context,
+  payload,
 }: {
-  name?: string;
+  name: K;
   context: Context<EventProviderContextProps<T>>;
+  payload: T[K]["payload"] extends Record<string, never>
+    ? never
+    : T[K]["payload"];
 }) => {
   const { emitEvent } = useContext(context);
-
+  const nameString = name as string;
   return (
-    <button onClick={() => emitEvent(name, {})} data-testid={`emitter-${name}`}>
-      Emit {name}
+    <button
+      onClick={() => emitEvent(...([name, payload] as EmitParams<T, K>))}
+      data-testid={`emitter-${nameString}`}
+    >
+      Emit {nameString}
     </button>
   );
 };
 
-const Receiver = <T extends Record<string, EventType<unknown>>>({
-  name = "default",
-  callback = () => null,
+const Receiver = <
+  T extends Record<string, EventType<unknown, unknown>>,
+  K extends keyof T
+>({
+  name,
+  callback = vi.fn(),
   context,
+  options,
 }: {
-  name?: string;
-  callback?: () => void;
+  name: K;
   context: Context<EventProviderContextProps<T>>;
+  callback?: () => void;
+  options: T[K]["options"] extends never ? never : T[K]["options"];
 }) => {
   const { useEvent } = useContext(context);
 
-  useEvent(name, () => {
-    callback();
-  });
+  useEvent<K>(
+    ...([name, callback, options] as unknown as AddCallbackParams<T, K>)
+  );
 
   return null;
 };
@@ -44,6 +63,7 @@ describe("createEventContext", () => {
     type EventType = {
       a: {
         payload: string;
+        options: never;
       };
     };
     const { EventContext, Provider } = createEventContext<EventType>(
@@ -58,11 +78,13 @@ describe("createEventContext", () => {
     type EventTypeA = {
       a: {
         payload: string;
+        options: never;
       };
     };
     type EventTypeB = {
       b: {
         payload: number;
+        options: never;
       };
     };
 
@@ -84,8 +106,8 @@ describe("createEventContext", () => {
         <EventContextA.Provider
           value={{ useEvent: callbackA, emitEvent: vi.fn() }}
         >
-          <Receiver context={EventContextA} />
-          <Receiver context={EventContextB} />
+          <Receiver context={EventContextA} name="a" options={{} as never} />
+          <Receiver context={EventContextB} name="b" options={{} as never} />
         </EventContextA.Provider>
       </EventContextB.Provider>
     );
@@ -98,11 +120,13 @@ describe("createEventContext", () => {
     type EventTypeA = {
       a: {
         payload: string;
+        options: never;
       };
     };
     type EventTypeB = {
       b: {
         payload: number;
+        options: never;
       };
     };
 
@@ -124,10 +148,10 @@ describe("createEventContext", () => {
         <EventContextA.Provider
           value={{ useEvent: vi.fn(), emitEvent: callbackA }}
         >
-          <Receiver name="a" context={EventContextA} />
-          <Receiver name="b" context={EventContextB} />
-          <Emitter name="a" context={EventContextA} />
-          <Emitter name="b" context={EventContextB} />
+          <Receiver name="a" context={EventContextA} options={{} as never} />
+          <Receiver name="b" context={EventContextB} options={{} as never} />
+          <Emitter name="a" context={EventContextA} payload="a" />
+          <Emitter name="b" context={EventContextB} payload={1} />
         </EventContextA.Provider>
       </EventContextB.Provider>
     );
