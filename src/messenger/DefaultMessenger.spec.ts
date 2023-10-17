@@ -48,7 +48,7 @@ describe("DefaultEventMessenger", () => {
 
     eventMessenger.addCallback("test", callback1);
     eventMessenger.addCallback("test", callback2);
-    eventMessenger.emit("test", {});
+    eventMessenger.emit("test");
 
     expect(callback1).toHaveBeenCalled();
     expect(callback2).toHaveBeenCalled();
@@ -61,7 +61,9 @@ describe("DefaultEventMessenger", () => {
         options: Record<string, never>;
       };
       test2: {
-        payload: Record<string, never>;
+        payload: {
+          message: string;
+        };
         options: Record<string, never>;
       };
     }>();
@@ -70,7 +72,7 @@ describe("DefaultEventMessenger", () => {
 
     eventMessenger.addCallback("test", callback1);
     eventMessenger.addCallback("test2", callback2);
-    eventMessenger.emit("test", {});
+    eventMessenger.emit("test");
 
     expect(callback1).toHaveBeenCalled();
     expect(callback2).not.toHaveBeenCalled();

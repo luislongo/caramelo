@@ -1,5 +1,10 @@
 import { v4 as uuid } from "uuid";
-import { EventCallback, EventType, IMessenger } from "./Messenger.types";
+import {
+  EmitParams,
+  EventCallback,
+  EventType,
+  IMessenger,
+} from "./Messenger.types";
 
 type CallbackRecord<T extends Record<string, EventType<unknown, unknown>>> = {
   [K in keyof T]: Record<string, EventCallback<T[K]["payload"]>>;
@@ -37,7 +42,7 @@ export class DefaultEventMessenger<
     }
   };
 
-  emit = <K extends keyof T>(event: K, payload: T[K]["payload"]) => {
+  emit = <K extends keyof T>(...[event, payload]: EmitParams<T, K>) => {
     if (this.callbackMap[event]) {
       Object.values(this.callbackMap[event] || []).forEach((callback) =>
         callback(payload)

@@ -1,7 +1,11 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { v4 as uuid } from "uuid";
 import { DefaultEventMessenger } from "../messenger/DefaultMessenger";
-import { EventCallback, EventType } from "../messenger/Messenger.types";
+import {
+  EmitParams,
+  EventCallback,
+  EventType,
+} from "../messenger/Messenger.types";
 import { EventProviderProps } from "./EventProvider.types";
 
 export const EventProvider = <
@@ -27,8 +31,8 @@ export const EventProvider = <
     }, [callback, name, options]);
   };
 
-  const emitEvent = <K extends keyof T>(name: K, payload: T[K]["payload"]) => {
-    messenger.emit(name, payload);
+  const emitEvent = <K extends keyof T>(...args: EmitParams<T, K>) => {
+    messenger.emit(...args);
   };
 
   return (

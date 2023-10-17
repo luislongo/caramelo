@@ -2,21 +2,31 @@ import { describe, it, expect, vi } from "vitest";
 import { createEventContext } from "./createEventContext";
 import { render, waitFor } from "@testing-library/react";
 import React, { Context, useContext } from "react";
-import { EventType } from "../messenger/Messenger.types";
+import { EventType, EmitParams } from "../messenger/Messenger.types";
 import { EventProviderContextProps } from "./EventProvider.types";
 
-const Emitter = <T extends Record<string, EventType<unknown, unknown>>>({
-  name = "default",
+const Emitter = <
+  T extends Record<string, EventType<unknown, unknown>>,
+  K extends keyof T
+>({
+  name,
   context,
+  payload,
 }: {
-  name?: string;
+  name: K;
   context: Context<EventProviderContextProps<T>>;
+  payload: T[K]["payload"] extends Record<string, never>
+    ? never
+    : T[K]["payload"];
 }) => {
   const { emitEvent } = useContext(context);
-
+  const nameString = name as string;
   return (
-    <button onClick={() => emitEvent(name, {})} data-testid={`emitter-${name}`}>
-      Emit {name}
+    <button
+      onClick={() => emitEvent(...([name, payload] as EmitParams<T, K>))}
+      data-testid={`emitter-${nameString}`}
+    >
+      Emit {nameString}
     </button>
   );
 };
@@ -135,8 +145,8 @@ describe("createEventContext", () => {
         >
           <Receiver name="a" context={EventContextA} />
           <Receiver name="b" context={EventContextB} />
-          <Emitter name="a" context={EventContextA} />
-          <Emitter name="b" context={EventContextB} />
+          <Emitter name="a" context={EventContextA} payload="a" />
+          <Emitter name="b" context={EventContextB} payload={1} />
         </EventContextA.Provider>
       </EventContextB.Provider>
     );
