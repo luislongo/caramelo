@@ -1,5 +1,6 @@
 import { v4 as uuid } from "uuid";
 import {
+  AddCallbackParams,
   EmitParams,
   EventCallback,
   EventType,
@@ -17,8 +18,7 @@ export class DefaultEventMessenger<
   callbackMap: Partial<CallbackRecord<T>> = {};
 
   addCallback = <K extends keyof T>(
-    event: K,
-    callback: (payload: T[K]["payload"]) => void
+    ...[event, callback]: AddCallbackParams<T, K>
   ): string => {
     const id = uuid();
 

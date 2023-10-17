@@ -1,9 +1,8 @@
 import { useEffect } from "react";
-import { v4 as uuid } from "uuid";
 import { DefaultEventMessenger } from "../messenger/DefaultMessenger";
 import {
+  AddCallbackParams,
   EmitParams,
-  EventCallback,
   EventType,
 } from "../messenger/Messenger.types";
 import { EventProviderProps } from "./EventProvider.types";
@@ -16,14 +15,12 @@ export const EventProvider = <
   context: Context,
 }: EventProviderProps<T>) => {
   const useEvent = <K extends keyof T>(
-    name: K,
-    callback: EventCallback<T[K]["payload"]>,
-    options: T[K]["options"]
+    ...[name, callback, options]: AddCallbackParams<T, K>
   ) => {
     useEffect(() => {
-      const id = uuid();
-
-      messenger.addCallback(name, callback, options);
+      const id = messenger.addCallback<K>(
+        ...([name, callback, options] as AddCallbackParams<T, K>)
+      );
 
       return () => {
         messenger.removeCallback(name, id);

@@ -5,14 +5,21 @@ export type EventType<P, O> = {
 
 export type EventCallback<P> = (payload: P) => void;
 
+export type AddCallbackParams<
+  T extends Record<string, EventType<unknown, unknown>>,
+  K extends keyof T
+> = T[K]["options"] extends never
+  ? [event: K, callback: EventCallback<T[K]["payload"]>]
+  : [
+      event: K,
+      callback: EventCallback<T[K]["payload"]>,
+      options: T[K]["options"]
+    ];
+
 export type AddCallbackType<
   T extends Record<string, EventType<unknown, unknown>>,
   K extends keyof T
-> = (
-  event: K,
-  callback: EventCallback<T[K]["payload"]>,
-  options: T[K]["options"]
-) => string;
+> = (...args: AddCallbackParams<T, K>) => string;
 
 export type RemoveCallbackType<
   T extends Record<string, EventType<unknown, unknown>>,
@@ -34,7 +41,7 @@ export type EmitType<
 export interface IMessenger<
   T extends Record<string, EventType<unknown, unknown>>
 > {
-  addCallback: AddCallbackType<T, keyof T>;
+  addCallback: <K extends keyof T>(...args: AddCallbackParams<T, K>) => string;
   removeCallback: RemoveCallbackType<T, keyof T>;
   emit: EmitType<T, keyof T>;
 }

@@ -1,6 +1,6 @@
 import {
+  AddCallbackParams,
   EmitParams,
-  EventCallback,
   EventType,
   IMessenger,
 } from "../messenger/Messenger.types";
@@ -19,10 +19,6 @@ export type EventProviderContextProps<
     EventType<unknown, unknown>
   >
 > = {
-  useEvent: <K extends keyof T>(
-    name: K,
-    callback: EventCallback<T[K]["payload"]>,
-    options: T[K]["options"]
-  ) => void;
+  useEvent: <K extends keyof T>(...args: AddCallbackParams<T, K>) => void;
   emitEvent: <K extends keyof T>(...args: EmitParams<T, K>) => void;
 };
