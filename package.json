@@ -16,6 +16,9 @@
     "preview": "vite preview",
     "test": "vitest "
   },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  },
   "dependencies": {
     "uuid": "^9.0.1"
   },
