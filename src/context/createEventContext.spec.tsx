@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { createEventContext } from "./createEventContext";
 import { render, waitFor } from "@testing-library/react";
-import { Context, useContext } from "react";
+import React, { Context, useContext } from "react";
 import { EventType } from "../messenger/Messenger.types";
 import { EventProviderContextProps } from "./EventProvider.types";
 
