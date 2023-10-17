@@ -63,7 +63,7 @@ describe("createEventContext", () => {
     type EventType = {
       a: {
         payload: string;
-        options: Record<string, never>;
+        options: never;
       };
     };
     const { EventContext, Provider } = createEventContext<EventType>(
@@ -78,13 +78,13 @@ describe("createEventContext", () => {
     type EventTypeA = {
       a: {
         payload: string;
-        options: Record<string, never>;
+        options: never;
       };
     };
     type EventTypeB = {
       b: {
         payload: number;
-        options: Record<string, never>;
+        options: never;
       };
     };
 
@@ -120,13 +120,13 @@ describe("createEventContext", () => {
     type EventTypeA = {
       a: {
         payload: string;
-        options: Record<string, never>;
+        options: never;
       };
     };
     type EventTypeB = {
       b: {
         payload: number;
-        options: Record<string, never>;
+        options: never;
       };
     };
 

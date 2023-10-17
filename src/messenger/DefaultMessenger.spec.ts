@@ -39,7 +39,7 @@ describe("DefaultEventMessenger", () => {
   it("Should emit callback for all listeners", () => {
     const eventMessenger = new DefaultEventMessenger<{
       test: {
-        payload: Record<string, never>;
+        payload: never;
         options: never;
       };
     }>();
@@ -57,25 +57,19 @@ describe("DefaultEventMessenger", () => {
   it("Should be able to handle specific event names", () => {
     const eventMessenger = new DefaultEventMessenger<{
       test: {
-        payload: Record<string, never>;
+        payload: never;
         options: never;
       };
       test2: {
-        payload: {
-          message: string;
-        };
-        options: {
-          count: number;
-        };
+        payload: string;
+        options: never;
       };
     }>();
     const callback1 = vi.fn();
     const callback2 = vi.fn();
 
     eventMessenger.addCallback("test", callback1);
-    eventMessenger.addCallback("test2", callback2, {
-      count: 1,
-    });
+    eventMessenger.addCallback("test2", callback2);
     eventMessenger.emit("test");
 
     expect(callback1).toHaveBeenCalled();
@@ -85,27 +79,39 @@ describe("DefaultEventMessenger", () => {
   it("Should be able to handle specific event payloads", () => {
     const eventMessenger = new DefaultEventMessenger<{
       testA: {
-        payload: {
-          count: number;
-        };
+        payload: number;
         options: never;
       };
       testB: {
-        payload: {
-          message: string;
-        };
+        payload: string;
         options: never;
       };
     }>();
 
     const callback = vi.fn();
     eventMessenger.addCallback("testA", callback);
-    eventMessenger.emit("testA", {
-      count: 1,
-    });
+    eventMessenger.emit("testA", 1);
+    expect(callback).toHaveBeenCalledWith(1);
 
-    expect(callback).toHaveBeenCalledWith({
-      count: 1,
-    });
+    eventMessenger.addCallback("testB", callback);
+    eventMessenger.emit("testB", "test");
+    expect(callback).toHaveBeenCalledWith("test");
+  });
+
+  it("Should be able to handle specific event options", () => {
+    const eventMessenger = new DefaultEventMessenger<{
+      testA: {
+        payload: never;
+        options: number;
+      };
+      testB: {
+        payload: never;
+        options: string;
+      };
+    }>();
+
+    const callback = vi.fn();
+    eventMessenger.addCallback("testA", callback, 1);
+    eventMessenger.addCallback("testB", callback, "test");
   });
 });

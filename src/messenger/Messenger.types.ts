@@ -6,9 +6,7 @@ export type EventType<P, O> = {
 export type EventCallbackParams<
   T extends Record<string, EventType<unknown, unknown>>,
   K extends keyof T
-> = T[K]["payload"] extends Record<string, never>
-  ? []
-  : [payload: T[K]["payload"]];
+> = T[K]["payload"] extends never ? [] : [payload: T[K]["payload"]];
 
 export type EventCallback<
   T extends Record<string, EventType<unknown, unknown>>,
@@ -35,7 +33,7 @@ export type RemoveCallbackType<
 export type EmitParams<
   T extends Record<string, EventType<unknown, unknown>>,
   K extends keyof T
-> = T[K]["payload"] extends Record<string, never>
+> = T[K]["payload"] extends never
   ? [event: K]
   : [event: K, payload: T[K]["payload"]];
 

@@ -1,21 +1,23 @@
 import { render, waitFor } from "@testing-library/react";
+import { EventType } from "messenger/Messenger.types";
 import { Context, createContext, useContext } from "react";
 import { describe, expect, it, vi } from "vitest";
-import { EventProvider } from "./EventProvider";
 import { eventMessengerMock } from "../messenger/Messenger.mock";
+import { EventProvider } from "./EventProvider";
 import { EventProviderContextProps } from "./EventProvider.types";
-import React from "react";
 
-const EventProviderContext = createContext<EventProviderContextProps>(
-  {} as EventProviderContextProps
-);
+const EventProviderContext = createContext<
+  EventProviderContextProps<Record<string, EventType<unknown, unknown>>>
+>({} as EventProviderContextProps<Record<string, EventType<unknown, unknown>>>);
 
 const Emitter = ({
   name = "default",
   context,
 }: {
   name?: string;
-  context: Context<EventProviderContextProps>;
+  context: Context<
+    EventProviderContextProps<Record<string, EventType<unknown, unknown>>>
+  >;
 }) => {
   const { emitEvent } = useContext(context);
 
@@ -33,7 +35,9 @@ const Receiver = ({
 }: {
   name?: string;
   callback?: () => void;
-  context: Context<EventProviderContextProps>;
+  context: Context<
+    EventProviderContextProps<Record<string, EventType<unknown, unknown>>>
+  >;
 }) => {
   const { useEvent } = useContext(context);
 

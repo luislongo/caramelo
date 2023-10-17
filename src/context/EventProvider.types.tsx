@@ -14,10 +14,7 @@ export type EventProviderProps<
 };
 
 export type EventProviderContextProps<
-  T extends Record<string, EventType<unknown, unknown>> = Record<
-    string,
-    EventType<unknown, unknown>
-  >
+  T extends Record<string, EventType<unknown, unknown>>
 > = {
   useEvent: <K extends keyof T>(...args: AddCallbackParams<T, K>) => void;
   emitEvent: <K extends keyof T>(...args: EmitParams<T, K>) => void;
