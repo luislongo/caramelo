@@ -1,9 +1,8 @@
 # Caramelo
 
-<img src="caramelo.png" alt="Exemplo imagem" style={{
-   width:150px;
-   aspect: auto
-}}>
+<P align="center">
+  <img src="caramelo.png" alt="Exemplo imagem" width="200">
+</p>
 
 > Lightweight event messaging for React
 
