@@ -126,6 +126,7 @@ const Receiver = () => {
 By default, event emission uses a simple id register which does not take into account the `options` object. In order to use it, you will have to create a new messenger class implementing
 the `IMessenger` interface. The interface provides three methods:
 
--`addCallback: <K extends keyof T>(...[event, callback]: AddCallbackParams<T, K>) => string` -`removeCallback: <K extends keyof T>(event: K, id: string) => void` -`emit: <K extends keyof T>(...[event, payload]: EmitParams<T, K>)`
+- `addCallback: <K extends keyof T>(...[event, callback]: AddCallbackParams<T, K>) => string`;
+- `removeCallback: <K extends keyof T>(event: K, id: string) => void`; - `emit: <K extends keyof T>(...[event, payload]: EmitParams<T, K>)`;
 
 This allows you to implement your own register/emission solution, so functionality can be expanded on. A good example of this custom implementation scenario is a input listener. You may have a `onKeyPressed` listener with a `keyCode` option. Emit function could then match listeners with the correct `keyCode` in theiri options.
