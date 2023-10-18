@@ -1,10 +1,6 @@
 # Caramelo
 
-![GitHub language count](https://img.shields.io/github/languages/count/iuricode/README-template?style=for-the-badge)
-![GitHub repo size](https://img.shields.io/github/repo-size/iuricode/README-template?style=for-the-badge)
-![npm downloads](https://img.shields.io/github/dm/react-hook-form.svg?style=for-the-badge)]
-
-<img src="imagem.png" alt="Exemplo imagem">
+<img src="caramelo.png" alt="Exemplo imagem">
 
 > Lightweight event messagerie for React
 
