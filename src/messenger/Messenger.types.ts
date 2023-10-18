@@ -17,8 +17,8 @@ export type AddCallbackParams<
   T extends Record<string, EventType<unknown, unknown>>,
   K extends keyof T
 > = T[K]["options"] extends never
-  ? [event: K, callback: EventCallback<T, K>]
-  : [event: K, callback: EventCallback<T, K>, options: T[K]["options"]];
+  ? [name: K, callback: EventCallback<T, K>]
+  : [name: K, callback: EventCallback<T, K>, options: T[K]["options"]];
 
 export type AddCallbackType<
   T extends Record<string, EventType<unknown, unknown>>,
@@ -34,8 +34,8 @@ export type EmitParams<
   T extends Record<string, EventType<unknown, unknown>>,
   K extends keyof T
 > = T[K]["payload"] extends never
-  ? [event: K]
-  : [event: K, payload: T[K]["payload"]];
+  ? [name: K]
+  : [name: K, payload: T[K]["payload"]];
 
 export interface IMessenger<
   T extends Record<string, EventType<unknown, unknown>>

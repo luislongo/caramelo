@@ -19,17 +19,17 @@ export class DefaultEventMessenger<
   callbackMap: Partial<CallbackRecord<T>> = {};
 
   addCallback = <K extends keyof T>(
-    ...[event, callback]: AddCallbackParams<T, K>
+    ...[name, callback]: AddCallbackParams<T, K>
   ): string => {
     const id = uuid();
 
-    if (!this.callbackMap[event]) {
-      this.callbackMap[event] = {
+    if (!this.callbackMap[name]) {
+      this.callbackMap[name] = {
         [id]: callback,
       };
     } else {
-      this.callbackMap[event] = {
-        ...this.callbackMap[event],
+      this.callbackMap[name] = {
+        ...this.callbackMap[name],
         [id]: callback,
       };
     }
@@ -37,15 +37,15 @@ export class DefaultEventMessenger<
     return id;
   };
 
-  removeCallback = <K extends keyof T>(event: K, id: string) => {
-    if (this.callbackMap[event]) {
-      this.callbackMap[event] && delete this.callbackMap[event]![id];
+  removeCallback = <K extends keyof T>(name: K, id: string) => {
+    if (this.callbackMap[name]) {
+      this.callbackMap[name] && delete this.callbackMap[name]![id];
     }
   };
 
-  emit = <K extends keyof T>(...[event, payload]: EmitParams<T, K>) => {
-    if (this.callbackMap[event]) {
-      Object.values(this.callbackMap[event] || []).forEach((callback) =>
+  emit = <K extends keyof T>(...[name, payload]: EmitParams<T, K>) => {
+    if (this.callbackMap[name]) {
+      Object.values(this.callbackMap[name] || []).forEach((callback) =>
         callback(...([payload] as EventCallbackParams<T, K>))
       );
     }
