@@ -18,8 +18,8 @@
 npm i @luislongo/caramelo
 ```
 
+```
 yarn add @luislongo/caramelo
-
 ```
 
 ## 🚀 Quickstart
@@ -27,26 +27,24 @@ yarn add @luislongo/caramelo
 The first thing to do is creating event types. In the example below, we are creating three events: `OnLoadStart`, `OnLoadUpdate` and `OnLoadEnd`.
 
 ```
-
 type OnLoadStart = {
-payload: never;
-options: never;
+  payload: never;
+  options: never;
 };
 
 type OnLoadUpdate = {
-payload: number;
-options: never;
+  payload: number;
+  options: never;
 };
 
 type OnLoadEnd = {
-payload: {
-success: boolean;
+  payload: {
+    success: boolean;
+  };
+  options: {
+    success: boolean;
+  };
 };
-options: {
-success: boolean;
-};
-};
-
 ```
 
 - `payload`: defines the object to be sent when event is emitted;
@@ -57,23 +55,21 @@ success: boolean;
 Once event types have been defined, `createEventContext` is used to create the event context. In order to do that, create a new type `EventType` which maps event keys to its corresponding types.
 
 ```
-
 type EventType = {
-onLoadStart: OnLoadStart;
-onLoadUpdate: OnLoadUpdate;
-onLoadEnd: OnLoadEnd;
+  onLoadStart: OnLoadStart;
+  onLoadUpdate: OnLoadUpdate;
+  onLoadEnd: OnLoadEnd;
 }
 
 const { Context, Provider } = createEventContext<EventType>(
-{} as EventProviderContextProps<EventType>
-);
+   {} as EventProviderContextProps<EventType>
+   );
 
 ```
 
 Finally, `Provider` should be added to the projects DOM
 
 ```
-
 <Provider context={Context}>
    ...
 </Provider>
