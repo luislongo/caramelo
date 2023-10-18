@@ -4,7 +4,7 @@ import { expect, describe, it, vi } from "vitest";
 describe("DefaultEventMessenger", () => {
   it("Should add callback and return id", () => {
     const eventMessenger = new DefaultEventMessenger<{
-      test: {
+      event_A: {
         payload: {
           message: string;
         };
@@ -13,26 +13,24 @@ describe("DefaultEventMessenger", () => {
     }>();
 
     const callback = vi.fn();
-    const id = eventMessenger.addCallback("test", callback);
+    const id = eventMessenger.addCallback("event_A", callback);
 
-    expect(eventMessenger.callbackMap.test![id]).toBe(callback);
+    expect(eventMessenger.callbackMap.event_A![id]).toBe(callback);
   });
 
   it("Should remove callback", () => {
     const eventMessenger = new DefaultEventMessenger<{
-      test: {
-        payload: {
-          message: string;
-        };
+      event_A: {
+        payload: string;
         options: never;
       };
     }>();
 
-    const id = eventMessenger.addCallback("test", () => {});
-    eventMessenger.removeCallback("test", id);
+    const id = eventMessenger.addCallback("event_A", () => {});
+    eventMessenger.removeCallback("event_A", id);
 
     expect(eventMessenger.callbackMap).toEqual({
-      test: {},
+      event_A: {},
     });
   });
 
@@ -56,62 +54,62 @@ describe("DefaultEventMessenger", () => {
 
   it("Should be able to handle specific event names", () => {
     const eventMessenger = new DefaultEventMessenger<{
-      test: {
+      event_A: {
         payload: never;
         options: never;
       };
-      test2: {
+      event_B: {
         payload: string;
         options: never;
       };
     }>();
-    const callback1 = vi.fn();
-    const callback2 = vi.fn();
+    const callbackA = vi.fn();
+    const callbackB = vi.fn();
 
-    eventMessenger.addCallback("test", callback1);
-    eventMessenger.addCallback("test2", callback2);
-    eventMessenger.emit("test");
+    eventMessenger.addCallback("event_A", callbackA);
+    eventMessenger.addCallback("event_B", callbackB);
+    eventMessenger.emit("event_A");
 
-    expect(callback1).toHaveBeenCalled();
-    expect(callback2).not.toHaveBeenCalled();
+    expect(callbackA).toHaveBeenCalled();
+    expect(callbackB).not.toHaveBeenCalled();
   });
 
   it("Should be able to handle specific event payloads", () => {
     const eventMessenger = new DefaultEventMessenger<{
-      testA: {
+      event_A: {
         payload: number;
         options: never;
       };
-      testB: {
+      event_B: {
         payload: string;
         options: never;
       };
     }>();
 
     const callback = vi.fn();
-    eventMessenger.addCallback("testA", callback);
-    eventMessenger.emit("testA", 1);
+    eventMessenger.addCallback("event_A", callback);
+    eventMessenger.emit("event_A", 1);
     expect(callback).toHaveBeenCalledWith(1);
 
-    eventMessenger.addCallback("testB", callback);
-    eventMessenger.emit("testB", "test");
+    eventMessenger.addCallback("event_B", callback);
+    eventMessenger.emit("event_B", "test");
     expect(callback).toHaveBeenCalledWith("test");
   });
 
   it("Should be able to handle specific event options", () => {
     const eventMessenger = new DefaultEventMessenger<{
-      testA: {
+      event_A: {
         payload: never;
         options: number;
       };
-      testB: {
+      event_B: {
         payload: never;
         options: string;
       };
     }>();
 
     const callback = vi.fn();
-    eventMessenger.addCallback("testA", callback, 1);
-    eventMessenger.addCallback("testB", callback, "test");
+    eventMessenger.addCallback("event_A", callback, 1);
+    eventMessenger.addCallback("event_B", callback, "test");
   });
 });
