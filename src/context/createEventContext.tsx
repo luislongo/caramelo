@@ -8,10 +8,9 @@ export const createEventContext = <
 >(
   initialState: EventProviderContextProps<T>
 ) => {
-  const EventContext =
-    createContext<EventProviderContextProps<T>>(initialState);
+  const Context = createContext<EventProviderContextProps<T>>(initialState);
 
   const Provider = EventProvider<T>;
 
-  return { EventContext, Provider };
+  return { Context, Provider };
 };

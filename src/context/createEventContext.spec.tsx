@@ -66,11 +66,11 @@ describe("createEventContext", () => {
         options: never;
       };
     };
-    const { EventContext, Provider } = createEventContext<EventType>(
+    const { Context, Provider } = createEventContext<EventType>(
       {} as EventProviderContextProps<EventType>
     );
 
-    expect(EventContext).toBeDefined();
+    expect(Context).toBeDefined();
     expect(Provider).toBeDefined();
   });
 
@@ -88,11 +88,11 @@ describe("createEventContext", () => {
       };
     };
 
-    const { EventContext: EventContextA } = createEventContext<EventTypeA>(
+    const { Context: ContextA } = createEventContext<EventTypeA>(
       {} as EventProviderContextProps<EventTypeA>
     );
 
-    const { EventContext: EventContextB } = createEventContext<EventTypeB>(
+    const { Context: ContextB } = createEventContext<EventTypeB>(
       {} as EventProviderContextProps<EventTypeB>
     );
 
@@ -100,24 +100,12 @@ describe("createEventContext", () => {
     const callbackB = vi.fn();
 
     render(
-      <EventContextB.Provider
-        value={{ useEvent: callbackB, emitEvent: vi.fn() }}
-      >
-        <EventContextA.Provider
-          value={{ useEvent: callbackA, emitEvent: vi.fn() }}
-        >
-          <Receiver
-            context={EventContextA}
-            name="event_A"
-            options={{} as never}
-          />
-          <Receiver
-            context={EventContextB}
-            name="event_B"
-            options={{} as never}
-          />
-        </EventContextA.Provider>
-      </EventContextB.Provider>
+      <ContextB.Provider value={{ useEvent: callbackB, emitEvent: vi.fn() }}>
+        <ContextA.Provider value={{ useEvent: callbackA, emitEvent: vi.fn() }}>
+          <Receiver context={ContextA} name="event_A" options={{} as never} />
+          <Receiver context={ContextB} name="event_B" options={{} as never} />
+        </ContextA.Provider>
+      </ContextB.Provider>
     );
 
     expect(callbackA).toHaveBeenCalled();
@@ -138,11 +126,11 @@ describe("createEventContext", () => {
       };
     };
 
-    const { EventContext: EventContextA } = createEventContext<EventTypeA>(
+    const { Context: ContextA } = createEventContext<EventTypeA>(
       {} as EventProviderContextProps<EventTypeA>
     );
 
-    const { EventContext: EventContextB } = createEventContext<EventTypeB>(
+    const { Context: ContextB } = createEventContext<EventTypeB>(
       {} as EventProviderContextProps<EventTypeB>
     );
 
@@ -150,26 +138,14 @@ describe("createEventContext", () => {
     const callbackB = vi.fn();
 
     const sut = render(
-      <EventContextB.Provider
-        value={{ useEvent: vi.fn(), emitEvent: callbackB }}
-      >
-        <EventContextA.Provider
-          value={{ useEvent: vi.fn(), emitEvent: callbackA }}
-        >
-          <Receiver
-            name="event_A"
-            context={EventContextA}
-            options={{} as never}
-          />
-          <Receiver
-            name="event_B"
-            context={EventContextB}
-            options={{} as never}
-          />
-          <Emitter name="event_A" context={EventContextA} payload="a" />
-          <Emitter name="event_B" context={EventContextB} payload={1} />
-        </EventContextA.Provider>
-      </EventContextB.Provider>
+      <ContextB.Provider value={{ useEvent: vi.fn(), emitEvent: callbackB }}>
+        <ContextA.Provider value={{ useEvent: vi.fn(), emitEvent: callbackA }}>
+          <Receiver name="event_A" context={ContextA} options={{} as never} />
+          <Receiver name="event_B" context={ContextB} options={{} as never} />
+          <Emitter name="event_A" context={ContextA} payload="a" />
+          <Emitter name="event_B" context={ContextB} payload={1} />
+        </ContextA.Provider>
+      </ContextB.Provider>
     );
 
     const emitterA = await sut.findByTestId("emitter-event_A");
