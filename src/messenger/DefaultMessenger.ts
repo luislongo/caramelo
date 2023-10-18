@@ -23,31 +23,21 @@ export class DefaultEventMessenger<
   ): string => {
     const id = uuid();
 
-    if (!this.callbackMap[name]) {
-      this.callbackMap[name] = {
-        [id]: callback,
-      };
-    } else {
-      this.callbackMap[name] = {
-        ...this.callbackMap[name],
-        [id]: callback,
-      };
-    }
+    this.callbackMap[name] = {
+      ...(this.callbackMap[name] || {}),
+      [id]: callback,
+    };
 
     return id;
   };
 
   removeCallback = <K extends keyof T>(name: K, id: string) => {
-    if (this.callbackMap[name]) {
-      this.callbackMap[name] && delete this.callbackMap[name]![id];
-    }
+    this.callbackMap[name] && delete this.callbackMap[name]![id];
   };
 
   emit = <K extends keyof T>(...[name, payload]: EmitParams<T, K>) => {
-    if (this.callbackMap[name]) {
-      Object.values(this.callbackMap[name] || []).forEach((callback) =>
-        callback(...([payload] as EventCallbackParams<T, K>))
-      );
-    }
+    Object.values(this.callbackMap[name] ?? {}).forEach((callback) =>
+      callback(...([payload] as EventCallbackParams<T, K>))
+    );
   };
 }

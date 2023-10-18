@@ -21,15 +21,28 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
+      - name: "Checkout repository"
+        uses: actions/checkout@v2
+
+      - name: "Setup node"
+        uses: actions/setup-node@v1
         with:
           node-version: 16
           registry-url: https://npm.pkg.github.com/
           scope: "@windix"
-      - run: npm i --legacy-peer-deps
-      - run: npm run build
-      - run: git config --global user.email "$GITHUB_ACTOR@users.noreply.github.com" && git config --global user.name "$GITHUB_ACTOR"
-      - run: npm publish
+
+      - name: Install and build
+        run: |
+          npm i --legacy-peer-deps
+          npm run build
+
+      - name: Configure git
+        run: git config --global user.email "$GITHUB_ACTOR@users.noreply.github.com" && git config --global user.name "$GITHUB_ACTOR"
+
+      - name: Publish to GitHub Package Registry
+        run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+
+      - name: Release new version
+        uses: justincy/github-action-npm-release@2.0.2
