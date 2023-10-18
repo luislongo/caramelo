@@ -1,13 +1,13 @@
-import { describe, it, expect, vi } from "vitest";
-import { createEventContext } from "./createEventContext";
-import { render, waitFor } from "@testing-library/react";
-import React, { Context, useContext } from "react";
+import { fireEvent, render } from "@testing-library/react";
+import { Context, useContext } from "react";
+import { describe, expect, it, vi } from "vitest";
 import {
-  EventType,
-  EmitParams,
   AddCallbackParams,
+  EmitParams,
+  EventType,
 } from "../messenger/Messenger.types";
 import { EventProviderContextProps } from "./EventProvider.types";
+import { createEventContext } from "./createEventContext";
 
 const Emitter = <
   T extends Record<string, EventType<unknown, unknown>>,
@@ -61,7 +61,7 @@ const Receiver = <
 describe("createEventContext", () => {
   it("Should create usable context", async () => {
     type EventType = {
-      a: {
+      event: {
         payload: string;
         options: never;
       };
@@ -76,13 +76,13 @@ describe("createEventContext", () => {
 
   it("Should be able to receive from two different contexts", async () => {
     type EventTypeA = {
-      a: {
+      event_A: {
         payload: string;
         options: never;
       };
     };
     type EventTypeB = {
-      b: {
+      event_B: {
         payload: number;
         options: never;
       };
@@ -106,8 +106,16 @@ describe("createEventContext", () => {
         <EventContextA.Provider
           value={{ useEvent: callbackA, emitEvent: vi.fn() }}
         >
-          <Receiver context={EventContextA} name="a" options={{} as never} />
-          <Receiver context={EventContextB} name="b" options={{} as never} />
+          <Receiver
+            context={EventContextA}
+            name="event_A"
+            options={{} as never}
+          />
+          <Receiver
+            context={EventContextB}
+            name="event_B"
+            options={{} as never}
+          />
         </EventContextA.Provider>
       </EventContextB.Provider>
     );
@@ -118,13 +126,13 @@ describe("createEventContext", () => {
 
   it("should be able to emit to different contexts", async () => {
     type EventTypeA = {
-      a: {
+      event_A: {
         payload: string;
         options: never;
       };
     };
     type EventTypeB = {
-      b: {
+      event_B: {
         payload: number;
         options: never;
       };
@@ -148,21 +156,29 @@ describe("createEventContext", () => {
         <EventContextA.Provider
           value={{ useEvent: vi.fn(), emitEvent: callbackA }}
         >
-          <Receiver name="a" context={EventContextA} options={{} as never} />
-          <Receiver name="b" context={EventContextB} options={{} as never} />
-          <Emitter name="a" context={EventContextA} payload="a" />
-          <Emitter name="b" context={EventContextB} payload={1} />
+          <Receiver
+            name="event_A"
+            context={EventContextA}
+            options={{} as never}
+          />
+          <Receiver
+            name="event_B"
+            context={EventContextB}
+            options={{} as never}
+          />
+          <Emitter name="event_A" context={EventContextA} payload="a" />
+          <Emitter name="event_B" context={EventContextB} payload={1} />
         </EventContextA.Provider>
       </EventContextB.Provider>
     );
 
-    const emitterA = await sut.findByTestId("emitter-a");
-    const emitterB = await sut.findByTestId("emitter-b");
+    const emitterA = await sut.findByTestId("emitter-event_A");
+    const emitterB = await sut.findByTestId("emitter-event_B");
 
-    emitterA.click();
-    emitterB.click();
+    fireEvent.click(emitterA);
+    fireEvent.click(emitterB);
 
-    await waitFor(() => expect(callbackA).toHaveBeenCalled());
-    await waitFor(() => expect(callbackB).toHaveBeenCalled());
+    expect(callbackA).toHaveBeenCalled();
+    expect(callbackB).toHaveBeenCalled();
   });
 });

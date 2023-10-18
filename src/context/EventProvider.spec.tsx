@@ -91,7 +91,7 @@ describe("EventProvider", () => {
     expect(eventMessengerMock.removeCallback).toHaveBeenCalled();
   });
 
-  it("Should emit event when emitter is clicked", async () => {
+  it("Should emit event when emitter is clicked", () => {
     const sut = render(
       <EventProvider
         messenger={eventMessengerMock}
@@ -103,6 +103,6 @@ describe("EventProvider", () => {
 
     sut.getByTestId("emitter-default").click();
 
-    await waitFor(() => expect(eventMessengerMock.emit).toHaveBeenCalled());
+    expect(eventMessengerMock.emit).toHaveBeenCalled();
   });
 });
