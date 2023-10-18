@@ -1,8 +1,11 @@
 # Caramelo
 
-<img src="caramelo.png" alt="Exemplo imagem">
+<img src="caramelo.png" alt="Exemplo imagem" style={{
+   width:150px;
+   aspect: auto
+}}>
 
-> Lightweight event messagerie for React
+> Lightweight event messaging for React
 
 ## ✅ Features
 
