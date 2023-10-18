@@ -67,7 +67,7 @@ const { Context, Provider } = createEventContext<EventType>(
 
 ```
 
-Finally, `Provider` should be added to the projects DOM
+Finally, `Provider` should be added to the DOM
 
 ```
 <Provider context={Context}>
