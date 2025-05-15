@@ -1,7 +1,7 @@
 # Caramelo
 
 <P align="center">
-  <img src="caramelo.png" alt="Exemplo imagem" width="200">
+  <img src="./caramelo.png" alt="Exemplo imagem" width="200">
 </p>
 
 > Lightweight event messaging for React
